@@ -18,27 +18,32 @@
 //    constructor ()
 //  }
 //}
-function AcklenProjects(robot: any) {
 
-  var fs: any = require('fs');
-  var projects: any = JSON.parse(fs.readFileSync('project.json', 'utf8'));
+var fs: any = require('fs');
+var _: any = require('underscore');
+var projects: any = JSON.parse(fs.readFileSync('project.json', 'utf8'));
 
- robot.respond(/create notes for (.*)/i, (msg: any) => {
+class Project {
+
+
+  constructor(robot:any){
+  }
+  createNotes(msg:any):any {
     var projectName = msg.match[1];
-    var project = _.filter(projects, function(p:any){
-      return p.name.toLowerCase() === projectName.toLowerCase();
-    });
-    if (project.length === 0){
-      var myjson = {'name': projectName };
-      projects.push(myjson);
-      fs.writeFile('project.json', JSON.stringify(projects));
-      msg.reply('Great ' + projectName  +' notes were created successfully')
-    } else {
-      msg.reply('ooops looks like you already have this project note')
-    }
-  })
+      var project = _.filter(projects, function(p:any){
+        return p.name.toLowerCase() === projectName.toLowerCase();
+      });
+      if (project.length === 0){
+        var myjson = {'name': projectName };
+        projects.push(myjson);
+        fs.writeFile('project.json', JSON.stringify(projects));
+        msg.reply('Great ' + projectName  +' notes were created successfully')
+      } else {
+        msg.reply('ooops looks like you already have this project note')
+      }
+  }
 
-  robot.respond(/add note (.*) to (.*) with (.*)/i, (msg: any) => {
+  addNote (msg: any){
     var variableName: string = msg.match[1];
     var projectName: string  = msg.match[2];
     var value: string = msg.match[3];
@@ -57,9 +62,9 @@ function AcklenProjects(robot: any) {
     } else{
       msg.send("Hey fellow " + projectName + " is not added as a project note, you can create a new  note project with the command: create notes for [Name of the Project note]");
     }
-  })
+  }
 
-  robot.respond(/list (.*) notes/i, (msg:any) =>{
+  listNotesDetail(msg:any){
     var projectName: string  = msg.match[1];
 
     var project = _.filter(projects, function(p:any){
@@ -79,10 +84,9 @@ function AcklenProjects(robot: any) {
       }
       msg.send(response);
     }
+  }
 
-  })
-
-  robot.respond(/list me all note projects/i, (msg:any) =>{
+  listAll(msg:any){
     if (projects.length === 0){
       msg.send("there are not notes, try adding one with the command: create notes for [Name Of Note Project]");
     }
@@ -95,11 +99,10 @@ function AcklenProjects(robot: any) {
       response += "list [ProjectName] notes"
       msg.send(response);
     }
+  }
 
-  })
-
-  robot.respond(/edit (.*) in (.*) with -> (.*)/i, (msg: any) => {
-       var property: string = msg.match[1];
+  editNotes(msg: any){
+    var property: string = msg.match[1];
        var projectName: string = msg.match[2];
        var newValue: string = msg.match[3];
 
@@ -132,7 +135,47 @@ function AcklenProjects(robot: any) {
            }
        }
 
-   })
+  }
+
+  help(msg: any){
+     var response: any = '';
+      response += "Hi Fellow, these are the available commands for notes script: \n";
+      response += "1. create notes for [project note name] \n";
+      response += "2. add note [note name] to [project note name] with [value] \n";
+      response += "3. list [project note name] notes \n";
+      response += "4. edit [note name] in [project note name] with [value] \n"
+      response += "5. list me all note projects"
+      msg.send(response);
+  }
+}
+
+function AcklenProjects(robot: any) {
+
+  var project = new Project(robot);
+
+  robot.respond(/create notes for (.*)/i, (msg: any) => {
+    project.createNotes(msg);
+  });
+
+  robot.respond(/add note (.*) to (.*) with (.*)/i, (msg: any) => {
+    project.addNote(msg);
+  });
+
+  robot.respond(/list (.*) notes/i, (msg:any) =>{
+    project.listNotesDetail(msg);
+  });
+
+  robot.respond(/list me all note projects/i, (msg:any) =>{
+    project.listAll(msg);
+  });
+
+  robot.respond(/edit (.*) in (.*) with (.*)/i, (msg: any) => {
+    project.editNotes(msg);
+   });
+
+  robot.respond(/notes help/i, (msg: any) => {
+    project.help(msg);
+   });
 }
 
 export = AcklenProjects;

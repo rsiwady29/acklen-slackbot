@@ -20,6 +20,7 @@
     "hubot-shipit": "^0.1.2",
     "hubot-slack": "^3.2.1",
     "hubot-youtube": "^0.1.2",
+    "moment": "^2.10.2",
     "mongodb": "^1.2.0",
     "node-parse-api": "^0.3.5",
     "parse": "^1.4.2",
@@ -43,6 +44,8 @@
     "gulp-mocha": "^2.0.0",
     "gulp-shell": "^0.4.0",
     "gulp-typescript": "^2.5.0",
+    "sinon": "^1.14.1",
+    "sinon-chai": "^2.7.0",
     "typescript": "^1.4.1",
     "wrappy": "^1.0.1"
   }

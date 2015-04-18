@@ -31,12 +31,20 @@ export class HubotFutbolWisdom implements IIHubotFutbolWisdom {
     	var dateTimeTodayString = dateTimeToday.getFullYear() + "-" + month +"-" + day;
 
     	var urlToGet = "http://api.football-data.org/alpha/teams/"+id+"/fixtures?timeFrameStart=" + dateTimeTodayString + "&timeFrameEnd=" + dateTimeTodayString;
-    	var promiseFixtures = this.promise(urlToGet);
+    	var options = {
+    		method : 'GET',
+    		uri: urlToGet,
+    		headers:{
+    			"X-Auth-Token" : "ad4d8f3691544a078374593ef45b89f0"
+    		}
+    	}
+    	
+    	var promiseFixtures = this.promise(options);
     	return promiseFixtures.then((body) => {
       		var fixtures = JSON.parse(body);
       		var message = "";
       		if (fixtures.fixtures.length > 0){
-        		message = "MatchDay | Home Team | Away Team | Status \n";
+      			message = "\n` MatchDay ` | ` Home Team                            ` | ` Away Team                            ` | ` Status         ` \n";
         		for(var i = 0; i<fixtures.fixtures.length;i++){
           			var game = fixtures.fixtures[i];
           			var length = 35;

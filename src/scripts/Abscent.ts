@@ -12,141 +12,72 @@
 //   Richard Siwady   <richard@acklenavenue.com>
 //   Douglas Guerrero <dguerrero@acklenavenue.com>
 
-var http = require("request-promise");
-var Parse = require('parse').Parse;
 
-Parse.initialize("wQFYcalrOw3YwIQoQ1BcgiMFhGE0tL4P24uKXFDm", "vdPFwegmiQvcnGIrFe09eTCI9oOyxm5buocTBu03");
+import parseDb = require("../helpers/parseDB");
 
-function Abscent(robot: any) {
-
-
+class Abscent {
+	
     // We should get this from some sort of a DB
-    var commands = ['AFK', 'BRB'];
-    var adjectives = ['for', 'in', 'until', 'back'];
-    var format = ['min', 'hour', 'day'];
-
-    // Build the regex using the commands, adjectives and formats.
-    var regex = new RegExp(
-        '\\b(' + commands.join('|') + ')\\s+(' +
-                 adjectives.join('|') +
+    commands: string[] = ['AFK', 'BRB'];
+    adjectives: string[] = ['for', 'in', 'until', 'back'];
+    format: string[] = ['min', 'hour', 'day'];
+    regex:any;
+        
+    constructor(private HubotParseDb: parseDb.IIHubotParseDb) {
+       this.regex = new RegExp(
+        '\\b(' + this.commands.join('|') + ')\\s+(' +
+                 this.adjectives.join('|') +
                  ')\\s+([0-9]+)\\s+(' +
-                 format.join('|') + ')\\b', 'i');
+                 this.format.join('|') + ')\\b', 'i');    
+    }
 
-    // Let's make hubot hear every command :)
-    robot.hear(/.*/i,
-        (msg:any) => {
-            var user = msg.message.user;
-            var object = regex.exec(msg.message.text);
+  	hubotAction = (robot: any) => {  
+        
+        robot.hear(/.*/i,
+            (msg:any) => {
+                var user:any = msg.message.user;
+                var object:any = this.regex.exec(msg.message.text);
 
-            if(object !== null ) {
-                var command = {
-                    User: user.name,
-                    Command: object[1],
-                    Time: parseInt(object[3]),
-                    Format: object[4]
-                };
-                saveAbscence(command);
-            }
-        });
+                if(object !== null ) {
+                    var command = {
+                        User: user.name,
+                        Command: object[1],
+                        Time: parseInt(object[3]),
+                        Format: object[4]
+                    };                    
+                    msg.send(msg, this.HubotParseDb.saveAbscence(command));
+                }
+            });
 
-    robot.respond(/abscence help/i,
+        robot.respond(/abscence help/i,
             (msg:any)=>{
                 msg.send('http://hola.com');
             });
+        
+        robot.hear(/(^|\W)@\w+/g,
+            (msg: any) => {
 
-    robot.hear(/(^|\W)@\w+/g,
-        (msg: any) => {
+                for(var i = 0; i < msg.match.length; i++){
+                    var user = msg.match[i];
+                    user = user.substring(1, user.length);                
 
-            for(var i = 0; i < msg.match.length; i++){
-                var user = msg.match[i];
-                user = user.substring(1, user.length);
-                var message = checkIsAbscent(msg, user);
-            }
-        });
+                    this.HubotParseDb.checkIsAbscent(msg, user);
+                }
+            });
+        
+        robot.hear(/\b(Im back|back)\b/g,
+            (msg: any) => {
+                var user = msg.message.user;
+                this.HubotParseDb.userIsBack(user.name);
+            });        
+    }
 }
 
-function saveAbscence(commands)
-{
-   var ParseClass = Parse.Object.extend("Users");
-   var parseClass = new ParseClass();
+var HubotParseDb = parseDb.HubotParseDb;
 
-   parseClass.set("User", commands.User);
-   parseClass.set("Command", commands.Command);
-   parseClass.set("Time", parseInt(commands.Time));
-   parseClass.set("Format", commands.Format);
-
-   parseClass.save(null, {
-       success: function(parseClass) {
-           console.log(parseClass.id);
-       },
-       error: function(parseClass, error) {
-           console.log(error.message);
-       }
-   });
-}
-
-function checkIsAbscent(msg, user)
-{
-   var today = new Date();
-       var tommorrow = new Date();
-
-       today.setHours(0,0,0,0);
-       tommorrow.setDate(today.getDate()+2);
-       tommorrow.setHours(0,0,0,0);
-
-       var Class = Parse.Object.extend("Users");
-       var query = new Parse.Query(Class);
-       query.equalTo("User", user);
-       query.greaterThan("createdAt", today);
-       query.lessThan("createdAt", tommorrow);
-       query.descending("createdAt");
-       query.find({
-           success: function(result) {
-               var format = result[0].attributes.Format;
-
-               if(format == 'min')
-               {
-                   today = new Date();
-                   var abscenceStartTime = result[0].createdAt;
-                   var abscenceEndTime = addMinutes(abscenceStartTime,result[0].attributes.Time);
-
-                   if(today> abscenceStartTime && today<abscenceEndTime)
-                   {
-                       var date = new Date(abscenceEndTime.toString());
-                       msg.send( result[0].attributes.User + " is abscent, will be back around " + date.toLocaleTimeString());
-                   }
-
-               }else if(format == 'hour')
-               {
-                   today = new Date();
-                   var abscenceStartTime = result[0].createdAt;
-                   var abscenceEndTime = addHours(abscenceStartTime,result[0].attributes.Time);
-
-                   if(today> abscenceStartTime && today<abscenceEndTime)
-                   {
-                       var date = new Date(abscenceEndTime.toString());
-                       msg.send( result[0].attributes.User + " is abscent, will be back around " + date.toLocaleTimeString() );
-                   }
-
-               }else if(format == 'day')
-               {
-
-               }
+var fn = new Abscent(new HubotParseDb()).hubotAction
+export = fn
 
 
-           },
-               error: function(error) {
-                console.log(error.message);
-           }
-       });
-}
 
-function addHours(date, hour) {
-   return new Date(date.getTime() + hour*60*60*1000);
-}
 
-function addMinutes(date, minutes) {
-   return new Date(date.getTime() + minutes*60000);
-}
-
-export = Abscent;
