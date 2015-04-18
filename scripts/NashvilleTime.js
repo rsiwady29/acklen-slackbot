@@ -1,12 +1,12 @@
 /// <reference path="../../typings/node/node.d.ts"/>
 // Description
-//  An example Hubot script written in TypeScript
+//  Mention anything about time zone, nashville time, or honduran time and you get taunted.
 //
 // Configuration:
 //   None
 //
 // Commands:
-//   hubot hello - responds 'Howdy!'
+//   time zone|Nashville Time|Honduran time|Honduras time|gringo time
 //
 // Author:
 //   Byron Sommardahl <byron@acklenavenue.com>
@@ -18,8 +18,7 @@ function NashvilleTime(robot) {
         "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQu5Oxk-y5MmZVquRbeSzzngH6990LSh-K08D0BUcKUjvKNncsW",
         "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTmkNuEnmaC0nxr5CRb0gIGe0yggqUjZVvtCkiBszZNmZ9cvZ5QNg",
         "http://s2.quickmeme.com/img/9c/9cedc5066c87efc1c09dffe668c6adf919500a34b9cb337a3afff7aa1622f6fc.jpg",
-        "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRy_LBFGoYQitLY2edYmRUnkljWMVtondEHrFObnbOfYs8IBsvQ_g",
-        "It's always 5 o'clock somewhere. But here, it's only 5 o'clock when it's 5 o'clock in Nashville.",        
+        "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRy_LBFGoYQitLY2edYmRUnkljWMVtondEHrFObnbOfYs8IBsvQ_g"
     ];
     robot.hear(/time zone|Nashville Time|Honduran time|Honduras time|gringo time/i, function (msg) {
         msg.reply(msg.random(taunts));
