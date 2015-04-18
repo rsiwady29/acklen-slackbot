@@ -43,7 +43,7 @@ var HubotParseDb = (function () {
                     var abscenceEndTime = _this.addMinutes(abscenceStartTime, result[0].attributes.Time);
                     if (today > abscenceStartTime && today < abscenceEndTime) {
                         var date = new Date(abscenceEndTime.toString());
-                        messageSender.send(result[0].attributes.User + " is away right now and will be back around " + moment(date.toLocaleString()).format('h:mm A'));
+                        messageSender.send(result[0].attributes.User + " is away right now and will be back around " + date.toLocaleTimeString());
                     }
                 }
                 else if (format == 'hour') {
@@ -52,7 +52,7 @@ var HubotParseDb = (function () {
                     var abscenceEndTime = _this.addHours(abscenceStartTime, result[0].attributes.Time);
                     if (today > abscenceStartTime && today < abscenceEndTime) {
                         var date = new Date(abscenceEndTime.toString());
-                        messageSender.send(result[0].attributes.User + " is away right now and will be back around " + moment(date.toLocaleString()).format('h:mm A'));
+                        messageSender.send(result[0].attributes.User + " is away right now and will be back around " + date.toLocaleTimeString());
                     }
                 }
                 else if (format == 'day') {
