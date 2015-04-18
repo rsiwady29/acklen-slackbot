@@ -54,7 +54,7 @@ var Project = (function () {
             msg.reply(variableName + ' added to ' + projectName);
         }
         else {
-            msg.send("Hey fellow " + projectName + " is not added as a project note, you can create a new  note project with the command: create notes for [Name of the Project note]");
+            msg.reply("Hey fellow " + projectName + " is not added as a project note, you can create a new  note project with the command: create notes for [Name of the Project note]");
         }
     };
     Project.prototype.listNotesDetail = function (msg) {
@@ -63,7 +63,7 @@ var Project = (function () {
             return p.name.toLowerCase() === projectName.toLowerCase();
         });
         if (project.length === 0) {
-            msg.send("ok yo got me, I dont have information about this project note :(");
+            msg.reply("ok yo got me, I dont have information about this project note :(");
         }
         else {
             var response = '';
@@ -72,7 +72,7 @@ var Project = (function () {
                 var propertyName = properties[key];
                 response += properties[key] + ": " + project[0][propertyName] + "\n";
             }
-            msg.send(response);
+            msg.reply(response);
         }
     };
     Project.prototype.listAll = function (msg) {
@@ -97,11 +97,11 @@ var Project = (function () {
             return p.name.toLowerCase() === projectName.toLowerCase();
         });
         if (project.length === 0) {
-            msg.send("ok yo got me, I don't have information about this project :(");
+            msg.reply("ok yo got me, I don't have information about this project :(");
         }
         else {
             if (project[0][property].length === 0) {
-                msg.send("ok yo got me, I don't have information about this note :(");
+                msg.reply("ok yo got me, I don't have information about this note :(");
             }
             else {
                 var response = '';
@@ -111,7 +111,7 @@ var Project = (function () {
                     }
                 });
                 fs.writeFileSync('project.json', JSON.stringify(projects));
-                msg.send("You have edited " + property + " in " + projectName);
+                msg.reply("You have edited " + property + " in " + projectName);
             }
         }
     };
@@ -123,7 +123,7 @@ var Project = (function () {
         response += "3. list [project note name] notes \n";
         response += "4. edit [note name] in [project note name] with [value] \n";
         response += "5. list me all note projects";
-        msg.send(response);
+        msg.reply(response);
     };
     return Project;
 })();
