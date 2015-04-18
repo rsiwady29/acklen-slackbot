@@ -36,7 +36,6 @@ module.exports = (robot) ->
 
       db.authenticate user, pass, (err, success) ->
         return error err if err
-
         collection = new Collection client, 'SlackLogger'
         collection.save({ChannelName:robot.message.user.room,Author:robot.message.user.real_name,EmailAddress:robot.message.user.email_address,SlackMessage:robot.message.text,SlackDateTime:new Date()}, {w:0})
 ###
