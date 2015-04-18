@@ -31,8 +31,8 @@ var Project = (function () {
         if (project.length === 0) {
             var myjson = { 'name': projectName };
             projects.push(myjson);
-            fs.writeFile('project.json', JSON.stringify(projects));
-            msg.reply('Great ' + projectName + ' notes were created successfully');
+            fs.writeFileSync('project.json', JSON.stringify(projects));
+            msg.reply('Great ' + projectName + ' notes created successfully');
         }
         else {
             msg.reply('ooops looks like you already have this project note');
@@ -50,7 +50,7 @@ var Project = (function () {
             }
         });
         if (projectExist) {
-            fs.writeFile('project.json', JSON.stringify(projects));
+            fs.writeFileSync('project.json', JSON.stringify(projects));
             msg.reply(variableName + ' added to ' + projectName);
         }
         else {
@@ -110,7 +110,7 @@ var Project = (function () {
                         p[property] = newValue;
                     }
                 });
-                fs.writeFile('project.json', JSON.stringify(projects));
+                fs.writeFileSync('project.json', JSON.stringify(projects));
                 msg.send("You have edited " + property + " in " + projectName);
             }
         }

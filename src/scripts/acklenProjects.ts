@@ -36,8 +36,8 @@ class Project {
       if (project.length === 0){
         var myjson = {'name': projectName };
         projects.push(myjson);
-        fs.writeFile('project.json', JSON.stringify(projects));
-        msg.reply('Great ' + projectName  +' notes were created successfully')
+        fs.writeFileSync('project.json', JSON.stringify(projects));
+        msg.reply('Great ' + projectName  +' notes created successfully')
       } else {
         msg.reply('ooops looks like you already have this project note')
       }
@@ -57,10 +57,10 @@ class Project {
       }
     })
     if (projectExist){
-      fs.writeFile('project.json', JSON.stringify(projects));
+      fs.writeFileSync('project.json', JSON.stringify(projects));
       msg.reply(variableName + ' added to ' + projectName);
     } else{
-      msg.send("Hey fellow " + projectName + " is not added as a project note, you can create a new  note project with the command: create notes for [Name of the Project note]");
+      msg.reply("Hey fellow " + projectName + " is not added as a project note, you can create a new  note project with the command: create notes for [Name of the Project note]");
     }
   }
 
@@ -72,7 +72,7 @@ class Project {
     });
 
     if (project.length === 0){
-      msg.send("ok yo got me, I dont have information about this project note :(");
+      msg.reply("ok yo got me, I dont have information about this project note :(");
     }
     else{
       var response: string ='';
@@ -82,7 +82,7 @@ class Project {
         var propertyName = properties[key];
         response += properties[key] + ": " + project[0][propertyName] + "\n";
       }
-      msg.send(response);
+      msg.reply(response);
     }
   }
 
@@ -112,12 +112,12 @@ class Project {
 
 
        if (project.length === 0) {
-           msg.send("ok yo got me, I don't have information about this project :(");
+           msg.reply("ok yo got me, I don't have information about this project :(");
        }
        else {
 
            if (project[0][property].length === 0) {
-               msg.send("ok yo got me, I don't have information about this note :(");
+               msg.reply("ok yo got me, I don't have information about this note :(");
            }
            else {
                var response: string = '';
@@ -128,9 +128,9 @@ class Project {
                    }
                })
 
-               fs.writeFile('project.json', JSON.stringify(projects));
+               fs.writeFileSync('project.json', JSON.stringify(projects));
 
-               msg.send("You have edited " + property + " in " + projectName);
+               msg.reply("You have edited " + property + " in " + projectName);
 
            }
        }
@@ -145,7 +145,7 @@ class Project {
       response += "3. list [project note name] notes \n";
       response += "4. edit [note name] in [project note name] with [value] \n"
       response += "5. list me all note projects"
-      msg.send(response);
+      msg.reply(response);
   }
 }
 
