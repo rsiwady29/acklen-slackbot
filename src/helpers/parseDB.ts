@@ -59,7 +59,7 @@ export class HubotParseDb implements IIHubotParseDb {
                    if(today> abscenceStartTime && today<abscenceEndTime)
                    {
                        var date = new Date(abscenceEndTime.toString());
-                       messageSender.send( result[0].attributes.User + " is away right now and will be back around " + moment(date).format('h:mm A'));
+                       messageSender.send( result[0].attributes.User + " is away right now and will be back around " + moment(date.toLocaleString()).format('h:mm A'));
                    }
 
                }else if(format == 'hour')
@@ -71,7 +71,7 @@ export class HubotParseDb implements IIHubotParseDb {
                    if(today> abscenceStartTime && today<abscenceEndTime)
                    {
                        var date = new Date(abscenceEndTime.toString());
-                       messageSender.send(result[0].attributes.User + " is away right now and will be back around " + moment(date).format('h:mm A'));
+                       messageSender.send(result[0].attributes.User + " is away right now and will be back around " + moment(date.toLocaleString()).format('h:mm A'));
                    }
 
                }else if(format == 'day')
