@@ -22,7 +22,7 @@ var SlackTroll = (function () {
                 promise.then(function (body) {
                     var memeData = JSON.parse(body);
                     var memeURL = memeData.result.instanceImageUrl;
-                    msg.reply(memeURL);
+                    //msg.reply(memeURL);
                 });
             });
         };
