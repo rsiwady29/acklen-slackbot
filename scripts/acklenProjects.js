@@ -110,11 +110,28 @@ var Project = (function () {
             });
         });
     };
+    Project.prototype.deleteNote = function (msg) {
+        var projectName = msg.match[1];
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
+            }
+            db.collection('notes').findOne({ "Note Name": { $regex: new RegExp(projectName, "i") } }, function (errFind, document) {
+                if (document === null) {
+                    msg.reply("this notes does not exist!");
+                }
+                else {
+                    db.collection('notes').remove({ "Note Name": { $regex: new RegExp(projectName, "i") } }, 1, function (err) {
+                        msg.reply("Note " + projectName + " removed successfully");
+                    });
+                }
+            });
+        });
+    };
     Project.prototype.editNotes = function (msg) {
         var property = msg.match[1];
         var projectName = msg.match[2];
         var newValue = msg.match[3];
-
         mongodb.connect(uri, function (err, db) {
             if (err) {
                 console.log('Error: Unable to connect to database');
@@ -124,7 +141,6 @@ var Project = (function () {
                     msg.reply("ok yo got me :grin: !, I don't have information about this note");
                 }
                 else {
-                    console.log(document[property]);
                     if (document[property] === undefined) {
                         msg.reply("Note " + property + " does not exist in " + projectName + "!");
                     }
@@ -146,7 +162,8 @@ var Project = (function () {
         response += "2. add [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n";
         response += "3. [NoteName] notes detail \n";
         response += "4. edit [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n";
-        response += "5. list all notes";
+        response += "5. delete note [NoteName] \n";
+        response += "6. list all notes";
         msg.reply(response);
     };
     return Project;
@@ -167,6 +184,9 @@ function AcklenProjects(robot) {
     });
     robot.respond(/edit (.*) in (.*) with (.*)/i, function (msg) {
         project.editNotes(msg);
+    });
+    robot.respond(/delete note (.*)/i, function (msg) {
+        project.deleteNote(msg);
     });
     robot.respond(/notes help/i, function (msg) {
         project.help(msg);
