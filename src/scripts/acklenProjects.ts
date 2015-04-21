@@ -120,6 +120,24 @@ class Project {
     });
   }
 
+  deleteNote(msg: any){
+    var projectName: string = msg.match[1];
+    mongodb.connect(uri, function(err, db){
+      if (err){
+        console.log('Error: Unable to connect to database');
+      }
+      db.collection('notes').findOne({"Note Name": { $regex: new RegExp(projectName, "i") }}, function(errFind, document){
+        if (document === null){
+          msg.reply("this notes does not exist!");
+        }else{
+          db.collection('notes').remove({"Note Name": { $regex: new RegExp(projectName, "i") }}, 1 , function(err){
+            msg.reply("Note " + projectName + " removed successfully");
+          })
+        }
+      });
+    });
+  }
+
   editNotes(msg: any){
     var property: string = msg.match[1];
     var projectName: string = msg.match[2];
@@ -154,7 +172,8 @@ class Project {
       response += "2. add [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n";
       response += "3. [NoteName] notes detail \n";
       response += "4. edit [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n"
-      response += "5. list all notes"
+      response += "5. delete note [NoteName] \n"
+      response += "6. list all notes"
       msg.reply(response);
   }
 }
@@ -182,6 +201,10 @@ function AcklenProjects(robot: any) {
   robot.respond(/edit (.*) in (.*) with (.*)/i, (msg: any) => {
     project.editNotes(msg);
    });
+
+  robot.respond(/delete note (.*)/i, (msg:any) =>{
+    project.deleteNote(msg);
+  });
 
   robot.respond(/notes help/i, (msg: any) => {
     project.help(msg);
