@@ -17,7 +17,7 @@
 //    constructor ()
 //  }
 //}
-var fs: any = require('fs');
+var fs = require('fs');
 var _ = require('underscore');
 var mongodb = require('mongodb').MongoClient;
 var uri = 'mongodb://notesbot:ackl3n@ds041651.mongolab.com:41651/notesbot';
