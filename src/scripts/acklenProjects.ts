@@ -19,7 +19,7 @@
 //  }
 //}
 
-var fs: any = require('fs');
+var bson: any = require('bson');
 var _: any = require('underscore');
 var mongodb: any = require('mongodb').MongoClient;
 var uri = 'mongodb://notesbot:ackl3n@ds041651.mongolab.com:41651/notesbot';
