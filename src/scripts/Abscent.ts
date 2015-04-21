@@ -18,10 +18,10 @@ import parseDb = require("../helpers/parseDB");
 class Abscent {
 	
     // We should get this from some sort of a DB
-    commands: string[] = ['AFK', 'BRB'];
-    adjectives: string[] = ['for', 'in', 'until', 'back'];
-    format: string[] = ['min', 'hour', 'day'];
-    regex:any;
+    commands: string[] = ["AFK", "BRB", "Away"];
+    adjectives: string[] = ["for", "in", "until", "back"];
+    format: string[] = ["min", "hour", "day"];
+    regex: any;
         
     constructor(private HubotParseDb: parseDb.IIHubotParseDb) {
        this.regex = new RegExp(
@@ -49,9 +49,9 @@ class Abscent {
                 }
             });
 
-        robot.respond(/abscence help/i,
-            (msg:any)=>{
-                msg.send('http://hola.com');
+        robot.respond(/help/i,
+            (msg: any)=>{
+                msg.send("*AFK Help* \n\n `afk|brb for X min`");
             });
         
         robot.hear(/(^|\W)@\w+/g,
@@ -71,7 +71,7 @@ class Abscent {
                 this.HubotParseDb.userIsBack(user.name);
             });        
     }
-}
+ }
 
 var HubotParseDb = parseDb.HubotParseDb;
 
