@@ -7,7 +7,7 @@
 #   Uncomment the ones you want to try and experiment with.
 #
 #   These are from the scripting documentation: https://github.com/github/hubot/blob/master/docs/scripting.md
-###
+
 Util = require "util"
 mongodb = require "mongodb"
 Server = mongodb.Server
@@ -39,4 +39,3 @@ module.exports = (robot) ->
 
         collection = new Collection client, 'SlackLogger'
         collection.save({ChannelName:robot.message.user.room,Author:robot.message.user.real_name,EmailAddress:robot.message.user.email_address,SlackMessage:robot.message.text,SlackDateTime:new Date()}, {w:0})
-###

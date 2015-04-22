@@ -19,110 +19,151 @@
 //}
 var fs = require('fs');
 var _ = require('underscore');
-var projects = JSON.parse(fs.readFileSync('project.json', 'utf8'));
+var mongodb = require('mongodb').MongoClient;
+var uri = 'mongodb://notesbot:ackl3n@ds041651.mongolab.com:41651/notesbot';
+var projects = [];
 var Project = (function () {
     function Project(robot) {
     }
     Project.prototype.createNotes = function (msg) {
         var projectName = msg.match[1];
-        var project = _.filter(projects, function (p) {
-            return p.name.toLowerCase() === projectName.toLowerCase();
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
+            }
+            db.collection('notes').findOne({ "Note Name": { $regex: new RegExp(projectName, "i") } }, function (errFind, document) {
+                if (document === null) {
+                    db.collection('notes').insert({ "Note Name": projectName }, function (errIns) {
+                        msg.reply('Great!, ' + projectName + ' notes created successfully');
+                    });
+                }
+                else {
+                    msg.reply('ooops looks like you already create this note');
+                }
+            });
         });
-        if (project.length === 0) {
-            var myjson = { 'name': projectName };
-            projects.push(myjson);
-            fs.writeFileSync('project.json', JSON.stringify(projects));
-            msg.reply('Great ' + projectName + ' notes created successfully');
-        }
-        else {
-            msg.reply('ooops looks like you already have this project note');
-        }
     };
     Project.prototype.addNote = function (msg) {
         var variableName = msg.match[1];
         var projectName = msg.match[2];
         var value = msg.match[3];
-        var projectExist = false;
-        _.each(projects, function (p) {
-            if (p.name.toLowerCase() === projectName.toLowerCase()) {
-                p[variableName] = value;
-                projectExist = true;
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
             }
+            db.collection('notes').findOne({ "Note Name": { $regex: new RegExp(projectName, "i") } }, function (errFind, document) {
+                if (document === null) {
+                    msg.reply("Hey fellow " + projectName + " is not added as a project note, you can create a new" + " note project with the command: create notes for [NoteName]");
+                }
+                else {
+                    var newNote = {};
+                    newNote[variableName] = value;
+                    db.collection('notes').update({ "Note Name": { $regex: new RegExp(projectName, "i") } }, { $set: newNote }, function (errUpdate) {
+                        msg.reply('Note ' + variableName + ' added to ' + projectName);
+                    });
+                }
+            });
         });
-        if (projectExist) {
-            fs.writeFileSync('project.json', JSON.stringify(projects));
-            msg.reply(variableName + ' added to ' + projectName);
-        }
-        else {
-            msg.reply("Hey fellow " + projectName + " is not added as a project note, you can create a new  note project with the command: create notes for [Name of the Project note]");
-        }
     };
     Project.prototype.listNotesDetail = function (msg) {
         var projectName = msg.match[1];
-        var project = _.filter(projects, function (p) {
-            return p.name.toLowerCase() === projectName.toLowerCase();
-        });
-        if (project.length === 0) {
-            msg.reply("ok yo got me, I dont have information about this project note :(");
-        }
-        else {
-            var response = '';
-            var properties = Object.keys(project[0]);
-            for (var key in properties) {
-                var propertyName = properties[key];
-                response += properties[key] + ": " + project[0][propertyName] + "\n";
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
             }
-            msg.reply(response);
-        }
+            db.collection('notes').findOne({ "Note Name": { $regex: new RegExp(projectName, "i") } }, function (errFind, document) {
+                if (document === null) {
+                    msg.reply("ok yo got me :grin: !, I don't have information about this note");
+                }
+                else {
+                    var response = '';
+                    var properties = Object.keys(document);
+                    for (var key in properties) {
+                        var propertyName = properties[key];
+                        response += properties[key] + ": " + document[propertyName] + "\n";
+                    }
+                    msg.reply(response);
+                }
+            });
+        });
     };
     Project.prototype.listAll = function (msg) {
-        if (projects.length === 0) {
-            msg.send("there are not notes, try adding one with the command: create notes for [Name Of Note Project]");
-        }
-        else {
-            var response = '';
-            for (var project in projects) {
-                response += parseInt(project) + 1 + ". " + projects[project].name + "\n";
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
             }
-            response += "If you want to see the detail of each note project just try: \n";
-            response += "list [ProjectName] notes";
-            msg.send(response);
-        }
+            db.collection('notes').find(function (errFind, documents) {
+                var response = '';
+                documents.toArray(function (errFind, notes) {
+                    if (notes.length > 0) {
+                        for (var note in notes) {
+                            response += parseInt(note) + 1 + ". " + notes[note]["Note Name"] + "\n";
+                        }
+                        response += "If you want to see the detail of each note project just try: \n";
+                        response += "[NoteName] notes detail";
+                        msg.send(response);
+                    }
+                    else {
+                        msg.send("there aren't notes, try adding one with the command: create notes for [NoteName]");
+                    }
+                });
+            });
+        });
+    };
+    Project.prototype.deleteNote = function (msg) {
+        var projectName = msg.match[1];
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
+            }
+            db.collection('notes').findOne({ "Note Name": { $regex: new RegExp(projectName, "i") } }, function (errFind, document) {
+                if (document === null) {
+                    msg.reply("this notes does not exist!");
+                }
+                else {
+                    db.collection('notes').remove({ "Note Name": { $regex: new RegExp(projectName, "i") } }, 1, function (err) {
+                        msg.reply("Note " + projectName + " removed successfully");
+                    });
+                }
+            });
+        });
     };
     Project.prototype.editNotes = function (msg) {
         var property = msg.match[1];
         var projectName = msg.match[2];
         var newValue = msg.match[3];
-        var project = _.filter(projects, function (p) {
-            return p.name.toLowerCase() === projectName.toLowerCase();
-        });
-        if (project.length === 0) {
-            msg.reply("ok yo got me, I don't have information about this project :(");
-        }
-        else {
-            if (project[0][property].length === 0) {
-                msg.reply("ok yo got me, I don't have information about this note :(");
+        mongodb.connect(uri, function (err, db) {
+            if (err) {
+                console.log('Error: Unable to connect to database');
             }
-            else {
-                var response = '';
-                _.each(projects, function (p) {
-                    if (p.name.toLowerCase() === projectName.toLowerCase()) {
-                        p[property] = newValue;
+            db.collection('notes').findOne({ "Note Name": { $regex: new RegExp(projectName, "i") } }, function (errFind, document) {
+                if (document === null) {
+                    msg.reply("ok yo got me :grin: !, I don't have information about this note");
+                }
+                else {
+                    if (document[property] === undefined) {
+                        msg.reply("Note " + property + " does not exist in " + projectName + "!");
                     }
-                });
-                fs.writeFileSync('project.json', JSON.stringify(projects));
-                msg.reply("You have edited " + property + " in " + projectName);
-            }
-        }
+                    else {
+                        var editedNote = {};
+                        editedNote[property] = newValue;
+                        db.collection('notes').update({ "Note Name": { $regex: new RegExp(projectName, "i") } }, { $set: editedNote }, function (err) {
+                            msg.reply("You have edited note " + property + " in " + projectName);
+                        });
+                    }
+                }
+            });
+        });
     };
     Project.prototype.help = function (msg) {
         var response = '';
         response += "Hi Fellow, these are the available commands for notes script: \n";
-        response += "1. create notes for [project note name] \n";
-        response += "2. add note [note name] to [project note name] with [value] \n";
-        response += "3. list [project note name] notes \n";
-        response += "4. edit [note name] in [project note name] with [value] \n";
-        response += "5. list me all note projects";
+        response += "1. create notes for [NoteName] \n";
+        response += "2. add [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n";
+        response += "3. [NoteName] notes detail \n";
+        response += "4. edit [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n";
+        response += "5. delete note [NoteName] \n";
+        response += "6. list all notes";
         msg.reply(response);
     };
     return Project;
@@ -132,17 +173,20 @@ function AcklenProjects(robot) {
     robot.respond(/create notes for (.*)/i, function (msg) {
         project.createNotes(msg);
     });
-    robot.respond(/add note (.*) to (.*) with (.*)/i, function (msg) {
+    robot.respond(/add (.*) in (.*) with (.*)/i, function (msg) {
         project.addNote(msg);
     });
-    robot.respond(/list (.*) notes/i, function (msg) {
-        project.listNotesDetail(msg);
-    });
-    robot.respond(/list me all note projects/i, function (msg) {
+    robot.respond(/list all notes/i, function (msg) {
         project.listAll(msg);
+    });
+    robot.respond(/(.*) notes detail/i, function (msg) {
+        project.listNotesDetail(msg);
     });
     robot.respond(/edit (.*) in (.*) with (.*)/i, function (msg) {
         project.editNotes(msg);
+    });
+    robot.respond(/delete note (.*)/i, function (msg) {
+        project.deleteNote(msg);
     });
     robot.respond(/notes help/i, function (msg) {
         project.help(msg);
