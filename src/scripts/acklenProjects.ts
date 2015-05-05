@@ -88,7 +88,7 @@ class Project {
 
           for (var key in properties) {
             var propertyName = properties[key];
-            response += "*" properties[key] + ":* _" + document[propertyName] + "_ \n";
+            response += "*" + properties[key] + ":* _" + document[propertyName] + "_ \n";
           }
 
           msg.reply(response);
