@@ -54,13 +54,13 @@ it("should respond to notes help with List of the project notes'", () => {
     this.robot.overhears("notes help", resp);
     AcklenProject(this.robot);
     var response: any = '';
-      response += "Hi Fellow, these are the available commands for notes script: \n";
-      response += "1. create notes for [NoteName] \n";
-      response += "2. add [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n";
-      response += "3. [NoteName] notes detail \n";
-      response += "4. edit [NoteNameDetail] in [NoteName] with [NoteValueDetail] \n"
-      response += "5. delete note [NoteName] \n"
-      response += "6. list all notes"
+      response += "*Hi Fellow, these are the available commands for notes script:* \n";
+      response += "*1.* create notes for _[NoteName]_ \n";
+      response += "*2.* add _[NoteNameDetail]_ in _[NoteName]_ with _[NoteValueDetail]_ \n";
+      response += "*3.* _[NoteName]_ notes detail \n";
+      response += "*4.* edit _[NoteNameDetail]_ in _[NoteName]_ with _[NoteValueDetail]_ \n"
+      response += "*5.* delete note _[NoteName]_ \n"
+      response += "*6.* list all notes"
     expect(resp.messageReplied).to.equal(response);
   });
 });
