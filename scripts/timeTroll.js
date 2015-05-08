@@ -61,7 +61,7 @@ module.exports = function(robot){
   	}
 
   	function notifyCardIsStale(channel, card){
-		robot.messageRoom(channel, '<' + card.url + '|' + card.name + '> is stale! Should it be paused?');
+		robot.messageRoom(channel, card.name + ' is stale! Should it be paused? ' + card.url);
   	};
 
   	function getFromTrello(url, options){
