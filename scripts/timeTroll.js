@@ -28,12 +28,12 @@ module.exports = function(robot){
 	var q = require('q');
 	var moment = require('moment');
 	
-	var cronJob = require('cron').CronJob
-	var tz = 'America/Chicago'
-	new cronJob('*/30 * * * * *', checkTrelloForOldCardsInDevelopment, null, true, tz)
-
-	Trello = require("node-trello")
-	t = new Trello(process.env.HUBOT_TRELLO_KEY, process.env.HUBOT_TRELLO_TOKEN)
+	var cronJob = require('cron').CronJob;
+	var tz = 'America/Chicago';
+	
+	var Trello = require("node-trello");
+	var t = new Trello(process.env.HUBOT_TRELLO_KEY, process.env.HUBOT_TRELLO_TOKEN);
+	var job = new cronJob('*/59 * * * * *', checkTrelloForOldCardsInDevelopment, null, true, tz);
 
   	function getList(boardId, listName){
   		return getBoard(boardId).then(function(b){
