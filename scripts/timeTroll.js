@@ -8,6 +8,7 @@
 // Commands:
 //   hubot timeTroll set boardId {boardShortCode, ex: PYGBctHp}
 //   hubot timeTroll set listName {The List Name}
+//   hubot timeTroll set minutes {desired 'old card' threshold}
 //
 // URLS:
 //   GET /path?param=<val> - <what the request does>
@@ -95,10 +96,10 @@ module.exports = function(robot){
   		});
   	}
 
-  	function checkListForStaleCards(channel, boardId, listName){
+  	function checkListForStaleCards(minutes, channel, boardId, listName){
 		getCardsFromList(boardId, listName).then(function(cards){
 			cards.forEach(function(card){
-				if(moment(card.dateLastActivity) < moment().add(1, 'hour'))
+				if(moment(card.dateLastActivity) < moment().add(minutes, 'minutes'))
 				{
 					notifyCardIsStale(channel, card);	
 				}
@@ -120,7 +121,11 @@ module.exports = function(robot){
 				console.log(channel.name + " does not have a listName.");
 				return;
 			}
-			checkListForStaleCards(channels.name, channel.boardId, channel.listName);
+			if(!channel.minutes){
+				console.log(channel.name + " does not have minutes.");
+				return;
+			}
+			checkListForStaleCards(channel.minutes, channel.name, channel.boardId, channel.listName);
 		});		
 	}
 	
@@ -150,6 +155,10 @@ module.exports = function(robot){
 			msg.send("timeTroll is not sure what you want to set.");
 			return;
 		}
+		if(thingToSet==="name") {
+			msg.send("timeTroll doesn't like it when you try to hack him.");
+			return;
+		}
 		var valueOfTheThing = msg.match[2];
 		if(!valueOfTheThing) {
 			msg.send("timeTroll is not sure how you want to set " + thingToSet + ".");
@@ -162,7 +171,8 @@ module.exports = function(robot){
 		var channel = robot.brain.data.channels[channelName];
     	if(!channel){
     		robot.brain.data.channels[channelName] = {
-    			name : channelName
+    			name : channelName,
+    			minutes: 60
     		};    		
     	}
 
