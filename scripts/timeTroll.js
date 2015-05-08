@@ -148,6 +148,6 @@ module.exports = function(robot){
 
     	robot.brain.data.channels[channelName][thingToSet] = valueOfTheThing;
 
-    	console.log("Added " + thingToSet + "=" + valueOfTheThing + " to " + channelName);
+    	msg.respond("Thanks. Added " + thingToSet + "=" + valueOfTheThing + " to " + channelName);
 	});  
 }
