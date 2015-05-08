@@ -118,7 +118,7 @@ module.exports = function(robot){
   	}
 
 	function checkTrelloForOldCardsInDevelopment(){
-		var channels = robot.brain.data.timeTroll_channels;
+		var channels = robot.brain.get("timeTroll_channels");
 		if(!channels) return;
 
 		Object.keys(channels).forEach(function(key){
@@ -181,21 +181,33 @@ module.exports = function(robot){
 	function setChannelProp(channelName, key, val){
 		var channels = robot.brain.get("timeTroll_channels") || [];
 
-		var channel = channels[channelName];
+		var channel = _.find(channels, function(c){
+			return c.name == channelName;
+		});
+
     	if(!channel){
-    		channels[channelName] = {
+    		channel = {
     			name : channelName,
     			threshold: 60
     		};    		
     	}
 
-		channels[channelName][key] = val;
+		channel[key] = val;
 
-		robot.brain.set("timeTroll_channels", channels);
+		mappedChannels = _.map(channels, function(c){
+			if(c.name === channelName){
+				return channel;
+			}
+			else{
+				return c;
+			}
+		});
+
+		robot.brain.set("timeTroll_channels", mappedChannels);
 	}
 
 	function getChannel(channelName){
-		var channels = robot.brain.get("timeTroll_channels");
+		var channels = robot.brain.get("timeTroll_channels") || [];
 		if(!channels) return;
 		var channel = channels[channelName];
 		return channel;		
