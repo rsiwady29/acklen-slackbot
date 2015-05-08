@@ -124,6 +124,26 @@ module.exports = function(robot){
 		});		
 	}
 	
+	robot.respond(/timeTroll show/i, function(msg){
+
+		var channels = robot.brain.data.channels;
+		if(!channels){
+			msg.send("timeTroll is not set up for any channels.");
+		}
+		var channel = robot.brain.data.channels[msg.message.room];
+		if(!channel){
+			msg.send("timeTroll is not set up for this channel.");
+		}
+		if(!channel.boardId){
+			msg.send("timeTroll is not COMPLETLY set up for this channel. I need the board's id.");
+		}
+		if(!channel.listName){
+			msg.send("timeTroll is not COMPLETLY set up for this channel. I need the board's list name.");
+		}
+		msg.send("Hi! The timeTroll is set up for this channel.")
+		msg.send(JSON.stringify(channel));
+	});
+
 	robot.respond(/timeTroll set (\w+) (.*)/i, function(msg){
 		var thingToSet = msg.match[1];
 		if(!thingToSet) {
