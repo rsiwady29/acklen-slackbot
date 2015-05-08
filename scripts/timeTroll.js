@@ -37,8 +37,12 @@ module.exports = function(robot){
 	var seconds = 120;
 	setInterval(checkTrelloForOldCardsInDevelopment, seconds * 1000);
 	
+	var loaded = false;
 	robot.brain.on('loaded', function(){
-		robot.messageRoom("test", 'timeTroll loaded.');
+		if(!loaded){
+			robot.messageRoom("test", 'timeTroll loaded.');
+			loaded = true;
+		}
 	});
 
   	function getList(boardId, listName){
@@ -175,7 +179,7 @@ module.exports = function(robot){
 	});  
 
 	function setChannelProp(channelName, key, val){
-		var channels = robot.brain.data.timeTroll_channels || [];
+		var channels = robot.brain.get("timeTroll_channels") || [];
 
 		var channel = channels[channelName];
     	if(!channel){
@@ -193,7 +197,7 @@ module.exports = function(robot){
 	function getChannel(channelName){
 		var channels = robot.brain.get("timeTroll_channels");
 		if(!channels) return;
-		var channel = robot.brain.data.timeTroll_channels[channelName];
+		var channel = channels[channelName];
 		return channel;		
 	}
 
