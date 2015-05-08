@@ -109,7 +109,7 @@ module.exports = function(robot){
   	function checkListForStaleCards(minutes, channel, boardId, listName){
 		getCardsFromList(boardId, listName).then(function(cards){
 			cards.forEach(function(card){
-				if(moment(card.dateLastActivity) < moment().add(minutes, 'minutes'))
+				if(moment(card.dateLastActivity).add(minutes, 'minutes') < moment())
 				{
 					notifyCardIsStale(channel, card);	
 				}
