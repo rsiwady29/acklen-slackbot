@@ -8,7 +8,7 @@
 // Commands:
 //   hubot timeTroll set boardId {boardShortCode, ex: PYGBctHp}
 //   hubot timeTroll set listName {The List Name}
-//   hubot timeTroll set minutes {desired 'old card' threshold}
+//   hubot timeTroll set threshold {desired 'old card' threshold in minutes}
 //
 // URLS:
 //   GET /path?param=<val> - <what the request does>
@@ -121,11 +121,11 @@ module.exports = function(robot){
 				console.log(channel.name + " does not have a listName.");
 				return;
 			}
-			if(!channel.minutes){
-				console.log(channel.name + " does not have minutes.");
+			if(!channel.threshold){
+				console.log(channel.name + " does not have threshold.");
 				return;
 			}
-			checkListForStaleCards(channel.minutes, channel.name, channel.boardId, channel.listName);
+			checkListForStaleCards(channel.threshold, channel.name, channel.boardId, channel.listName);
 		});		
 	}
 	
@@ -172,7 +172,7 @@ module.exports = function(robot){
     	if(!channel){
     		robot.brain.data.channels[channelName] = {
     			name : channelName,
-    			minutes: 60
+    			threshold: 60
     		};    		
     	}
 
