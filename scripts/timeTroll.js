@@ -33,8 +33,9 @@ module.exports = function(robot){
 	
 	var Trello = require("node-trello");
 	var t = new Trello(process.env.HUBOT_TRELLO_KEY, process.env.HUBOT_TRELLO_TOKEN);
-	var job = new cronJob('*/59 * * * * *', checkTrelloForOldCardsInDevelopment, null, true, tz);
-
+	
+	setInterval(checkTrelloForOldCardsInDevelopment, 60 * 1000);
+	
   	function getList(boardId, listName){
   		return getBoard(boardId).then(function(b){
   			return getOneFromTrello("/1/boards/" + b.id + "/lists", {}, function(l){
