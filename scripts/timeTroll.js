@@ -195,14 +195,16 @@ module.exports = function(robot){
 	function getChannel(channelName){
 		var channels = robot.brain.get("timeTroll_channels") || [];
 		if(!channels) return;
-		var channel = channels[channelName];
+
+		var channel = _.find(channels, function(c){
+			return c.name == channelName;
+		});
+
 		return channel;		
 	}
 
 	function assureChannelExists(channelName, channels){
-		var channel = _.find(channels, function(c){
-			return c.name == channelName;
-		});
+		var channel = getChannel(channelName);
 
     	if(!channel){
     		channels.push({
