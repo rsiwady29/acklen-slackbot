@@ -110,7 +110,7 @@ module.exports = function(robot){
   	}
 
 	function checkTrelloForOldCardsInDevelopment(){
-		var channels = robot.brain.data.channels;
+		var channels = robot.brain.data.timeTroll_channels;
 		if(!channels) return;
 
 		Object.keys(channels).forEach(function(key){
@@ -133,11 +133,11 @@ module.exports = function(robot){
 	
 	robot.respond(/timeTroll show/i, function(msg){
 
-		var channels = robot.brain.data.channels;
+		var channels = robot.brain.data.timeTroll_channels;
 		if(!channels){
 			msg.send("timeTroll is not set up for any channels.");
 		}
-		var channel = robot.brain.data.channels[msg.message.room];
+		var channel = robot.brain.data.timeTroll_channels[msg.message.room];
 		if(!channel){
 			msg.send("timeTroll is not set up for this channel.");
 		}
@@ -167,18 +167,18 @@ module.exports = function(robot){
 			return;
 		}
 		
-		robot.brain.data.channels = robot.brain.data.channels || [];
+		robot.brain.data.timeTroll_channels = robot.brain.data.timeTroll_channels || [];
 
 		var channelName = msg.message.room;
-		var channel = robot.brain.data.channels[channelName];
+		var channel = robot.brain.data.timeTroll_channels[channelName];
     	if(!channel){
-    		robot.brain.data.channels[channelName] = {
+    		robot.brain.data.timeTroll_channels[channelName] = {
     			name : channelName,
     			threshold: 60
     		};    		
     	}
 
-    	robot.brain.data.channels[channelName][thingToSet] = valueOfTheThing;
+    	robot.brain.data.timeTroll_channels[channelName][thingToSet] = valueOfTheThing;
 
     	msg.send("Thanks. Added " + thingToSet + "=" + valueOfTheThing + " to " + channelName);
 	});  
