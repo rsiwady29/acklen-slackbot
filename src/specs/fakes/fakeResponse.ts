@@ -3,7 +3,13 @@
 import rsvp = require('es6-promise');
 var Promise = rsvp.Promise;
 
-export class FakeResponse{
+export IRobotResponse{
+	reply(message: string): void;
+	send(message: string): void;
+	random(arr: Array<any>): any;
+}
+
+export class FakeResponse implements IRobotResponse {
   	
   	messageSent: string = "none";
 	messageReplied: string = "none";

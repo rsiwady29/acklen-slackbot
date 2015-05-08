@@ -1,10 +1,15 @@
 var _ = require("underscore");
 
-export class FakeRobot {
+export interfact IRobot{
+	hear(exp: RegExp, response: IRobotResponse): void;
+	respond(exp: RegExp, response: IRobotResponse): void;
+}
+
+export class FakeRobot implements IRobot {
 
 	private testResponses = [];
 	
-	hear(exp: RegExp, msg: any){
+	hear(exp: RegExp, msg: IRobotResponse){
 		var matching = _.find(this.testResponses, (r)=>{
 			return exp.test(r.text);
 			});
@@ -14,7 +19,7 @@ export class FakeRobot {
 		}
 	}
 
-	respond(exp: RegExp, msg: any){
+	respond(exp: RegExp, msg: IRobotResponse){
 		var matching = _.find(this.testResponses, (r)=>{
 			return exp.test(r.text);
 			});
@@ -26,7 +31,7 @@ export class FakeRobot {
 		}
 	}
 
-	overhears(text: string, response: any){
+	overhears(text: string, response: IRobotResponse){
 		this.testResponses.push({text: text, response: response});
 	}
 }
