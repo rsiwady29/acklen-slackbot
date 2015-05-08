@@ -203,6 +203,7 @@ module.exports = function(robot){
 
 		var savedChannel = getChannel(channelName);
 		if(savedChannel[key]!=val){
+			
 			robot.messageRoom(channelName, "The data was not successfully saved to redis.");
 		}
 	}
