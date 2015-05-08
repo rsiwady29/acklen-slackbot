@@ -38,8 +38,7 @@ module.exports = function(robot){
 	setInterval(checkTrelloForOldCardsInDevelopment, seconds * 1000);
 	
 	robot.brain.on('loaded', function(){
-		robot.messageRoom("test", 'Brain loaded.');
-		robot.messageRoom("test", JSON.stringify(getChannel('test')));
+		robot.messageRoom("test", 'timeTroll loaded.');
 	});
 
   	function getList(boardId, listName){
@@ -188,11 +187,11 @@ module.exports = function(robot){
 
 		channels[channelName][key] = val;
 
-		robot.brain.data.timeTroll_channels = channels;
+		robot.brain.set("timeTroll_channels", channels);
 	}
 
 	function getChannel(channelName){
-		var channels = robot.brain.data.timeTroll_channels;
+		var channels = robot.brain.get("timeTroll_channels");
 		if(!channels) return;
 		var channel = robot.brain.data.timeTroll_channels[channelName];
 		return channel;		
