@@ -180,7 +180,26 @@ module.exports = function(robot){
 
 	function setChannelProp(channelName, key, val){
 		var channels = robot.brain.get("timeTroll_channels") || [];
+		assureChannelExists(channelName, channels);
 
+		channels = _.map(channels, function(c){
+			if(c.name === channelName){
+				c[key] = val;
+			}
+			return c;		
+		});
+
+		robot.brain.set("timeTroll_channels", channels);		
+	}
+
+	function getChannel(channelName){
+		var channels = robot.brain.get("timeTroll_channels") || [];
+		if(!channels) return;
+		var channel = channels[channelName];
+		return channel;		
+	}
+
+	function assureChannelExists(channelName, channels){
 		var channel = _.find(channels, function(c){
 			return c.name == channelName;
 		});
@@ -191,28 +210,6 @@ module.exports = function(robot){
     			threshold: 60
     		});    		
     	}
-
-		mappedChannels = _.map(channels, function(c){
-			if(c.name === channelName){
-				c[key] = val;
-			}
-			return c;		
-		});
-
-		robot.brain.set("timeTroll_channels", mappedChannels);
-
-		var savedChannel = getChannel(channelName);
-		if(savedChannel[key]!=val){
-			
-			robot.messageRoom(channelName, "The data was not successfully saved to redis.");
-		}
-	}
-
-	function getChannel(channelName){
-		var channels = robot.brain.get("timeTroll_channels") || [];
-		if(!channels) return;
-		var channel = channels[channelName];
-		return channel;		
 	}
 
 }
