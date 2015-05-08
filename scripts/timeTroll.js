@@ -34,7 +34,8 @@ module.exports = function(robot){
 	var Trello = require("node-trello");
 	var t = new Trello(process.env.HUBOT_TRELLO_KEY, process.env.HUBOT_TRELLO_TOKEN);
 	
-	setInterval(checkTrelloForOldCardsInDevelopment, 60 * 1000);
+	var seconds = 120;
+	setInterval(checkTrelloForOldCardsInDevelopment, seconds * 1000);
 	
   	function getList(boardId, listName){
   		return getBoard(boardId).then(function(b){
