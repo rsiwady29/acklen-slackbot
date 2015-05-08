@@ -186,24 +186,25 @@ module.exports = function(robot){
 		});
 
     	if(!channel){
-    		channel = {
+    		channels.push({
     			name : channelName,
     			threshold: 60
-    		};    		
+    		});    		
     	}
-
-		channel[key] = val;
 
 		mappedChannels = _.map(channels, function(c){
 			if(c.name === channelName){
-				return channel;
+				c[key] = val;
 			}
-			else{
-				return c;
-			}
+			return c;		
 		});
 
 		robot.brain.set("timeTroll_channels", mappedChannels);
+
+		var savedChannel = getChannel(channelName);
+		if(savedChannel[key]!=val){
+			robot.messageRoom(channelName, "The data was not successfully saved to redis.");
+		}
 	}
 
 	function getChannel(channelName){
