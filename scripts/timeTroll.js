@@ -37,6 +37,11 @@ module.exports = function(robot){
 	var seconds = 120;
 	setInterval(checkTrelloForOldCardsInDevelopment, seconds * 1000);
 	
+	robot.brain.on('loaded', function(){
+		robot.messageRoom("test", 'Brain loaded.');
+		robot.messageRoom("test", JSON.stringify(getChannel('test')));
+	});
+
   	function getList(boardId, listName){
   		return getBoard(boardId).then(function(b){
   			return getOneFromTrello("/1/boards/" + b.id + "/lists", {}, function(l){
@@ -135,12 +140,15 @@ module.exports = function(robot){
 		var channel = getChannel(msg.message.room);
 		if(!channel){
 			msg.send("timeTroll is not set up for this channel.");
+			return;
 		}
 		if(!channel.boardId){
 			msg.send("timeTroll is not COMPLETLY set up for this channel. I need the board's id.");
+			return;
 		}
 		if(!channel.listName){
 			msg.send("timeTroll is not COMPLETLY set up for this channel. I need the board's list name.");
+			return;
 		}
 		msg.send("Hi! The timeTroll is set up for this channel.")
 		msg.send(JSON.stringify(channel));
