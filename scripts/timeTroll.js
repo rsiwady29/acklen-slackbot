@@ -139,6 +139,11 @@ module.exports = function(robot){
 		});		
 	}
 	
+	robot.respond(/timeTroll remove/i, function(msg){
+		removeChannel(msg.message.room);
+		msg.send("timeTroll has been removed from this channel.");
+	});
+
 	robot.respond(/timeTroll show/i, function(msg){
 		var channel = getChannel(msg.message.room);
 		if(!channel){
@@ -201,6 +206,17 @@ module.exports = function(robot){
 		});
 
 		return channel;		
+	}
+
+	function removeChannel(channelName){
+		var channels = robot.brain.get("timeTroll_channels") || [];
+		if(!channels) return;
+
+		var channels = _.filter(channels, function(c){
+			return c.name != channelName;
+		});
+
+		robot.brain.set("timeTroll_channels", channels);
 	}
 
 	function assureChannelExists(channelName, channels){
