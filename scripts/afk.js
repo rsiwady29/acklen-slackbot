@@ -37,6 +37,15 @@ var Abscent = (function () {
             robot.respond(/help/i, function (msg) {
                 msg.send("*AFK Help* \n\n `afk|brb for X min`");
             });
+            robot.hear(/1/i, function (msg) {
+                msg.send("+1");
+                var n = robot.brain.get("test");
+                n = n == null ? 0 : n;
+                robot.brain.set("test", 1 + n);
+            });
+            robot.hear(/help/i, function (msg) {
+                msg.send(robot.brain.get("test"));
+            });
             robot.hear(/(^|\W)@\w+/g, function (msg) {
                 for (var i = 0; i < msg.match.length; i++) {
                     var user = msg.match[i];

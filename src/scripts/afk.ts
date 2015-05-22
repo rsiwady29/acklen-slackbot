@@ -53,6 +53,19 @@ class Abscent {
             (msg: any)=>{
                 msg.send("*AFK Help* \n\n `afk|brb for X min`");
             });
+
+        robot.hear(/1/i,
+            (msg: any)=>{
+                msg.send("+1");
+                var n:number = robot.brain.get("test");
+                n = n == null ? 0 : n;
+                robot.brain.set("test", 1 + n );                
+            });
+
+        robot.hear(/help/i,
+            (msg: any)=>{
+                msg.send(robot.brain.get("test"));
+            });
         
         robot.hear(/(^|\W)@\w+/g,
             (msg: any) => {

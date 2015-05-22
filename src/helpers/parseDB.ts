@@ -49,11 +49,12 @@ export class HubotParseDb implements IIHubotParseDb {
        query.find({
            success: (result:any) => {
                var format = result[0].attributes.Format;
+               today = new Date();
+               var abscenceStartTime = result[0].createdAt;
 
+               
                if(format == 'min')
                {
-                   today = new Date();
-                   var abscenceStartTime = result[0].createdAt;
                    var abscenceEndTime = this.addMinutes(abscenceStartTime,result[0].attributes.Time);
 
                    if(today> abscenceStartTime && today<abscenceEndTime)
@@ -64,8 +65,6 @@ export class HubotParseDb implements IIHubotParseDb {
 
                }else if(format == 'hour')
                {
-                   today = new Date();
-                   var abscenceStartTime = result[0].createdAt;
                    var abscenceEndTime = this.addHours(abscenceStartTime,result[0].attributes.Time);
 
                    if(today> abscenceStartTime && today<abscenceEndTime)
