@@ -11,6 +11,7 @@ describe("The Hello World Hubot script", () => {
   beforeEach(() => {
     this.robot = new FakeRobot();        
   });
+    
 
   it("should respond to 'hello' with 'Howdy!'", () => {    
     var resp = new FakeResponse();
